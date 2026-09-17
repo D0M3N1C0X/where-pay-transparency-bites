@@ -1,0 +1,403 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Where pay transparency bites: explorer</title>
+<style>
+:root{
+  color-scheme: light;
+  --bg:#f7f7f5; --surface:#fcfcfb; --raised:#ffffff;
+  --ink:#14161a; --secondary:#52514e; --muted:#7a7975;
+  --line:#e4e4e0; --line-strong:#d2d2cc;
+  --s1:#2a78d6; --s2:#eb6834; --context:#c3c2b7; --wash:#f0efec;
+  --o1:#86b6ef; --o2:#3987e5; --o3:#184f95;
+  --shadow:0 1px 2px rgba(20,22,26,.05), 0 6px 20px rgba(20,22,26,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --bg:#121211; --surface:#1a1a19; --raised:#212120;
+    --ink:#f4f4f2; --secondary:#c3c2b7; --muted:#95948c;
+    --line:#2c2c2a; --line-strong:#3d3d3a;
+    --s1:#3987e5; --s2:#d95926; --context:#6b6a65; --wash:#262624;
+    --o1:#184f95; --o2:#3987e5; --o3:#86b6ef;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --bg:#121211; --surface:#1a1a19; --raised:#212120;
+  --ink:#f4f4f2; --secondary:#c3c2b7; --muted:#95948c;
+  --line:#2c2c2a; --line-strong:#3d3d3a;
+  --s1:#3987e5; --s2:#d95926; --context:#6b6a65; --wash:#262624;
+  --o1:#184f95; --o2:#3987e5; --o3:#86b6ef;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+body{margin:0; background:var(--bg); color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  font-size:15px; line-height:1.55; -webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px; margin:0 auto; padding:clamp(1rem,3vw,2.5rem) clamp(1rem,3vw,2rem) 4rem}
+header.masthead{border-bottom:1px solid var(--line-strong); padding-bottom:1.25rem; margin-bottom:1.5rem}
+.eyebrow{font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); font-weight:600}
+h1{font-size:clamp(1.5rem,3.2vw,2.1rem); margin:.35rem 0 .3rem; letter-spacing:-.015em}
+.sub{color:var(--secondary); font-size:.95rem; margin:0; max-width:52rem}
+.sub a, .foot a{color:var(--s1)}
+.controls{display:flex; flex-wrap:wrap; gap:.75rem; align-items:flex-end; background:var(--surface);
+  border:1px solid var(--line); border-radius:10px; padding:.9rem 1rem; margin-bottom:1.25rem}
+.control{display:flex; flex-direction:column; gap:.3rem; min-width:12rem; flex:0 1 16rem}
+.control label{font-size:.7rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); font-weight:600}
+select, button{font:inherit; font-size:.9rem; color:var(--ink); background:var(--raised);
+  border:1px solid var(--line-strong); border-radius:7px; padding:.45rem .6rem}
+select:focus-visible, button:focus-visible, .row:focus-visible{outline:2px solid var(--s1); outline-offset:2px}
+button{cursor:pointer}
+button:hover{border-color:var(--s1); color:var(--s1)}
+.tiles{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:.9rem; margin-bottom:1.25rem}
+.tile{background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:.9rem 1rem}
+.tile .label{font-size:.7rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); font-weight:600}
+.tile .value{font-size:2rem; font-weight:650; letter-spacing:-.02em; margin:.15rem 0 .1rem}
+.tile .note{font-size:.8rem; color:var(--secondary)}
+.grid{display:grid; grid-template-columns:1fr 1fr; gap:1rem; align-items:start}
+.full{grid-column:1 / -1}
+@media (max-width:900px){ .grid{grid-template-columns:1fr} }
+.panel{background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:1rem 1.1rem 1.15rem; min-width:0}
+.panel h2{font-size:1rem; margin:0 0 .15rem; letter-spacing:-.01em}
+.panel p.hint{margin:0 0 .8rem; font-size:.82rem; color:var(--muted)}
+.legend{display:flex; flex-wrap:wrap; gap:.9rem; font-size:.8rem; color:var(--secondary); margin:0 0 .6rem}
+.legend span{display:inline-flex; align-items:center; gap:.35rem}
+.key{width:10px; height:10px; border-radius:50%; display:inline-block}
+.key.bar{border-radius:2px}
+svg{display:block; width:100%; height:auto; overflow:visible}
+svg text{font-family:inherit}
+.axis{fill:var(--muted); font-size:11px; font-variant-numeric:tabular-nums}
+.lbl{fill:var(--secondary); font-size:12px}
+.lbl.sel{fill:var(--ink); font-weight:650}
+.val{fill:var(--ink); font-size:12px; font-variant-numeric:tabular-nums}
+.grid-line{stroke:var(--line); stroke-width:1}
+.base-line{stroke:var(--line-strong); stroke-width:1}
+.rows{display:flex; flex-direction:column}
+.row{display:grid; grid-template-columns:7.5rem 1fr; align-items:center; cursor:pointer; border-radius:5px; padding:0 .25rem}
+.row:hover{background:var(--wash)}
+.row.sel{background:var(--wash)}
+.row .name{font-size:.8rem; color:var(--secondary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.row.sel .name{color:var(--ink); font-weight:650}
+.table-wrap{overflow-x:auto}
+table{width:100%; border-collapse:collapse; font-size:.84rem; font-variant-numeric:tabular-nums}
+th, td{padding:.45rem .5rem; border-bottom:1px solid var(--line); text-align:right; vertical-align:middle}
+th:first-child, td:first-child{text-align:left}
+thead th{font-size:.68rem; letter-spacing:.07em; text-transform:uppercase; color:var(--muted); font-weight:600; border-bottom:1px solid var(--line-strong)}
+td.contrib{min-width:7rem}
+.empty{color:var(--muted); font-size:.9rem; padding:1rem 0}
+.tooltip{position:fixed; pointer-events:none; z-index:10; background:var(--raised); color:var(--ink);
+  border:1px solid var(--line-strong); border-radius:7px; box-shadow:var(--shadow); padding:.45rem .6rem;
+  font-size:.8rem; max-width:18rem; opacity:0; transition:opacity .08s; white-space:pre-line}
+.foot{margin-top:1.5rem; font-size:.82rem; color:var(--secondary); border-top:1px solid var(--line); padding-top:1rem}
+.foot p{margin:.35rem 0}
+</style></head><body>
+<div class="wrap">
+<header class="masthead">
+  <div class="eyebrow">Directive (EU) 2023/970 · Eurostat Structure of Earnings Survey 2022 · gender pay gap 2010–<span id="latest-year"></span></div>
+  <h1>Where pay transparency bites: explorer</h1>
+  <p class="sub">The published gender pay gap, the gap inside sectors, and how much of each country's workforce reports every year from June 2027.
+  Read the <a href="../index.html">article</a> or the <a href="../paper.pdf">working paper</a>.</p>
+</header>
+
+<div class="controls" role="group" aria-label="Filters">
+  <div class="control"><label for="country">Country</label><select id="country"></select></div>
+  <button id="reset" type="button">Back to EU-27</button>
+</div>
+
+<section class="tiles" id="tiles" aria-live="polite"></section>
+
+<div class="grid">
+  <section class="panel">
+    <h2>Published gap and gap within sectors, 2022</h2>
+    <p class="hint">Click a country to select it. Sorted by the gap within the same sector.</p>
+    <div class="legend"><span><i class="key" style="background:var(--s2)"></i>Published gap</span><span><i class="key" style="background:var(--s1)"></i>Gap within the same sector</span></div>
+    <div class="rows" id="dumbbell"></div>
+  </section>
+  <div>
+    <section class="panel" style="margin-bottom:1rem">
+      <h2>The published gap over time</h2>
+      <p class="hint">Hover to read each year.</p>
+      <div class="legend" id="trend-legend"></div>
+      <div id="trend"></div>
+    </section>
+    <section class="panel">
+      <h2>Where it bites</h2>
+      <p class="hint">Gap within sectors (across) against the share of employees in enterprises of 250 or more (up). Lines mark the EU-27.</p>
+      <div id="scatter"></div>
+    </section>
+  </div>
+
+  <section class="panel full">
+    <h2 id="sectors-title">Inside the country: sectors</h2>
+    <p class="hint">Contribution of each sector to the 2022 gap, in points. "Where" is the effect of women and men working in different sectors; "within" is the pay difference inside the sector.</p>
+    <div class="legend"><span><i class="key bar" style="background:var(--s2)"></i>Where they work</span><span><i class="key bar" style="background:var(--s1)"></i>Within the sector</span></div>
+    <div class="table-wrap" id="sectors"></div>
+  </section>
+
+  <section class="panel">
+    <h2>Who reports every year</h2>
+    <p class="hint">Employees in enterprises with 10 or more staff, by enterprise size, 2022.</p>
+    <div class="legend"><span><i class="key bar" style="background:var(--o1)"></i>10–49</span><span><i class="key bar" style="background:var(--o2)"></i>50–249</span><span><i class="key bar" style="background:var(--o3)"></i>250 or more (annual reports)</span></div>
+    <div id="size"></div>
+  </section>
+  <section class="panel">
+    <h2>Public and private, and by age</h2>
+    <p class="hint" id="control-hint"></p>
+    <div id="control"></div>
+    <div id="age" style="margin-top:.8rem"></div>
+  </section>
+</div>
+
+<footer class="foot">
+  <p><strong>Method.</strong> The 2022 gap in mean hourly earnings is split over 17 NACE sections with symmetric weights, so the two parts add up to the gap. Sector cells rebuild every published national gap to within 0.5 points; the EU figure is the employee-weighted mean of the national ones, as Eurostat compiles it. Enterprises with 10+ employees, sections B–S excluding O.</p>
+  <p>Data: Eurostat, retrieved <span id="retrieved"></span>. Code and data: <a href="https://github.com/D0M3N1C0X/where-pay-transparency-bites">github.com/D0M3N1C0X/where-pay-transparency-bites</a>. By Domenico Perroni.</p>
+</footer>
+</div>
+<div class="tooltip" id="tooltip" role="status"></div>
+
+<script id="data" type="application/json">/*DATA*/</script>
+<script>
+const D = JSON.parse(document.getElementById('data').textContent);
+const EU = 'EU27_2020';
+const NAME = Object.fromEntries(D.countries.map(c => [c.geo, c.name]));
+const SECTION = Object.fromEntries(D.sections.map(s => [s.code, s.name]));
+const index = (arr, key = 'geo') => arr.reduce((m, r) => ((m[r[key]] = m[r[key]] || []).push(r), m), {});
+const DEC = Object.fromEntries(D.decomposition.map(r => [r.geo, r]));
+const EXP = Object.fromEntries(D.exposure.map(r => [r.geo, r]));
+const SERIES = index(D.series), SECTORS = index(D.sectors), LATEST = index(D.sector_latest);
+const SIZE = index(D.size_gap), CONTROL = index(D.control), AGE = index(D.age);
+const AGES = [['Y_LT25', 'Under 25'], ['Y25-34', '25–34'], ['Y35-44', '35–44'], ['Y45-54', '45–54'], ['Y55-64', '55–64'], ['Y_GE65', '65+']];
+const pct = (x, d = 1) => (x == null ? '–' : `${x.toFixed(d)}%`);
+const pts = x => `${x > 0 ? '+' : ''}${x.toFixed(1)} pts`;
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
+const state = {geo: EU};
+
+document.getElementById('latest-year').textContent = D.meta.latest_year;
+document.getElementById('retrieved').textContent = [].concat(D.meta.retrieved).join(', ');
+
+// ---- controls -------------------------------------------------------------------------------
+const select = document.getElementById('country');
+const order = D.countries.slice().sort((a, b) => (a.geo === EU ? -1 : b.geo === EU ? 1 : a.name.localeCompare(b.name)));
+select.innerHTML = order.map(c => `<option value="${c.geo}">${esc(c.name)}</option>`).join('');
+function choose(geo) {
+  state.geo = geo;
+  select.value = geo;
+  try { history.replaceState(null, '', `#${geo}`); } catch (e) {}
+  render();
+}
+select.addEventListener('change', () => choose(select.value));
+document.getElementById('reset').addEventListener('click', () => choose(EU));
+const fromHash = () => decodeURIComponent(location.hash.slice(1));
+if (NAME[fromHash()]) state.geo = fromHash();
+window.addEventListener('hashchange', () => { if (NAME[fromHash()] && fromHash() !== state.geo) choose(fromHash()); });
+
+// ---- tooltip --------------------------------------------------------------------------------
+const tip = document.getElementById('tooltip');
+function showTip(text, x, y) {
+  tip.textContent = text;
+  tip.style.opacity = 1;
+  const r = tip.getBoundingClientRect();
+  tip.style.left = `${Math.min(x + 14, innerWidth - r.width - 8)}px`;
+  tip.style.top = `${Math.min(y + 14, innerHeight - r.height - 8)}px`;
+}
+document.addEventListener('mousemove', e => {
+  const t = e.target.closest('[data-tip]');
+  if (t) showTip(t.dataset.tip, e.clientX, e.clientY);
+  else if (!e.target.closest('[data-crosshair]')) tip.style.opacity = 0;
+});
+
+// ---- helpers --------------------------------------------------------------------------------
+const scale = (d0, d1, r0, r1) => v => r0 + (v - d0) / (d1 - d0) * (r1 - r0);
+const niceMax = v => Math.ceil(v / 5) * 5;
+
+// ---- tiles ----------------------------------------------------------------------------------
+function tiles() {
+  const g = state.geo, dec = DEC[g], exp = EXP[g];
+  const series = (SERIES[g] || []).slice().sort((a, b) => a.year - b.year);
+  const last = series[series.length - 1], first = series.find(r => r.year === 2010);
+  const change = last && first ? `${(last.gap - first.gap) > 0 ? '+' : ''}${(last.gap - first.gap).toFixed(1)} pts since 2010` : '';
+  const tilesHtml = [
+    ['Published gap, 2022', pct(dec && dec.official), NAME[g]],
+    ['Gap within the same sector', pct(dec && dec.within), dec ? `${pts(dec.within - dec.official)} against the published gap` : ''],
+    ['Employees in enterprises of 250+', exp ? `${(exp.share_250 * 100).toFixed(0)}%` : '–', 'report every year from June 2027'],
+    [`Published gap, ${last ? last.year : ''}`, pct(last && last.gap), change],
+  ];
+  document.getElementById('tiles').innerHTML = tilesHtml.map(([l, v, n]) =>
+    `<div class="tile"><div class="label">${esc(l)}</div><div class="value">${esc(v)}</div><div class="note">${esc(n)}</div></div>`).join('');
+}
+
+// ---- dumbbell -------------------------------------------------------------------------------
+function dumbbell() {
+  const rows = D.decomposition.slice().sort((a, b) => b.within - a.within);
+  const lo = Math.min(0, ...rows.map(r => Math.min(r.official, r.within)));
+  const hi = niceMax(Math.max(...rows.map(r => Math.max(r.official, r.within))));
+  const W = 400, H = 20, x = scale(lo, hi, 8, W - 44);
+  document.getElementById('dumbbell').innerHTML = rows.map(r => {
+    const sel = r.geo === state.geo;
+    const a = x(r.official), b = x(r.within);
+    const t = `${NAME[r.geo]}\nPublished gap 2022: ${pct(r.official)}\nWithin the same sector: ${pct(r.within)}\nWhere women and men work: ${pts(r.between)}`;
+    return `<div class="row${sel ? ' sel' : ''}" role="button" tabindex="0" data-geo="${r.geo}" data-tip="${esc(t)}">
+      <span class="name">${esc(NAME[r.geo])}</span>
+      <svg viewBox="0 0 ${W} ${H}" aria-hidden="true">
+        <line x1="${x(0)}" x2="${x(0)}" y1="0" y2="${H}" class="base-line"/>
+        <line x1="${a}" x2="${b}" y1="${H / 2}" y2="${H / 2}" stroke="var(--context)" stroke-width="2"/>
+        <circle cx="${a}" cy="${H / 2}" r="${sel ? 5.5 : 4.5}" fill="var(--s2)" stroke="var(--surface)" stroke-width="2"/>
+        <circle cx="${b}" cy="${H / 2}" r="${sel ? 5.5 : 4.5}" fill="var(--s1)" stroke="var(--surface)" stroke-width="2"/>
+        ${sel ? `<text x="${Math.max(a, b) + 9}" y="${H / 2 + 4}" class="val">${pct(r.within)}</text>` : ''}
+      </svg></div>`;
+  }).join('') + `<svg viewBox="0 0 ${W} 18" aria-hidden="true" style="margin-left:7.75rem;width:calc(100% - 7.75rem)">
+      ${[0, 5, 10, 15, 20, 25].filter(v => v <= hi).map(v => `<text x="${x(v)}" y="12" text-anchor="middle" class="axis">${v}%</text>`).join('')}</svg>`;
+  document.querySelectorAll('#dumbbell .row').forEach(el => {
+    el.addEventListener('click', () => choose(el.dataset.geo));
+    el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); choose(el.dataset.geo); } });
+  });
+}
+
+// ---- trend ----------------------------------------------------------------------------------
+function trend() {
+  const g = state.geo;
+  const lines = [[g, 'var(--s1)']];
+  if (g !== EU) lines.push([EU, 'var(--s2)']);
+  document.getElementById('trend-legend').innerHTML = lines.map(([geo, c]) =>
+    `<span><i class="key" style="background:${c}"></i>${esc(NAME[geo])}</span>`).join('');
+  const data = lines.map(([geo, c]) => ({geo, c, pts: (SERIES[geo] || []).filter(r => r.year >= 2010).sort((a, b) => a.year - b.year)}));
+  const years = [...new Set(data.flatMap(d => d.pts.map(p => p.year)))].sort();
+  const all = data.flatMap(d => d.pts.map(p => p.gap));
+  const lo = Math.min(0, ...all), hi = niceMax(Math.max(...all, 5));
+  const W = 560, H = 230, L = 36, R = 44, T = 10, B = 26;
+  const x = scale(years[0], years[years.length - 1], L, W - R), y = scale(lo, hi, H - B, T);
+  const ticks = []; for (let v = Math.ceil(lo / 5) * 5; v <= hi; v += 5) ticks.push(v);
+  let svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Published gender pay gap by year">`;
+  svg += ticks.map(v => `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" class="grid-line"/><text x="${L - 6}" y="${y(v) + 4}" text-anchor="end" class="axis">${v}%</text>`).join('');
+  svg += years.filter(v => v % 2 === 0).map(v => `<text x="${x(v)}" y="${H - 8}" text-anchor="middle" class="axis">${v}</text>`).join('');
+  data.forEach(d => {
+    if (!d.pts.length) return;
+    svg += `<path d="${d.pts.map((p, i) => `${i ? 'L' : 'M'}${x(p.year).toFixed(1)},${y(p.gap).toFixed(1)}`).join('')}" fill="none" stroke="${d.c}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
+    const e = d.pts[d.pts.length - 1];
+    svg += `<circle cx="${x(e.year)}" cy="${y(e.gap)}" r="4" fill="${d.c}" stroke="var(--surface)" stroke-width="2"/>`;
+    if (d.geo === state.geo) svg += `<text x="${x(e.year) + 8}" y="${y(e.gap) + 4}" class="val">${pct(e.gap)}</text>`;
+  });
+  svg += `<line id="cross" y1="${T}" y2="${H - B}" stroke="var(--line-strong)" stroke-width="1" visibility="hidden"/>`;
+  svg += `<rect data-crosshair x="${L}" y="${T}" width="${W - L - R}" height="${H - T - B}" fill="transparent"/></svg>`;
+  const host = document.getElementById('trend');
+  host.innerHTML = svg;
+  const rect = host.querySelector('rect'), cross = host.querySelector('#cross');
+  rect.addEventListener('mousemove', ev => {
+    const box = rect.getBoundingClientRect();
+    const yr = Math.round(years[0] + (ev.clientX - box.left) / box.width * (years[years.length - 1] - years[0]));
+    cross.setAttribute('x1', x(yr)); cross.setAttribute('x2', x(yr)); cross.setAttribute('visibility', 'visible');
+    const text = [String(yr)].concat(data.map(d => { const p = d.pts.find(q => q.year === yr); return `${NAME[d.geo]}: ${pct(p && p.gap)}`; }));
+    showTip(text.join('\n'), ev.clientX, ev.clientY);
+  });
+  rect.addEventListener('mouseleave', () => { cross.setAttribute('visibility', 'hidden'); tip.style.opacity = 0; });
+}
+
+// ---- scatter --------------------------------------------------------------------------------
+function scatter() {
+  const pts = D.decomposition.filter(r => r.geo !== EU && EXP[r.geo]).map(r => ({...r, share: EXP[r.geo].share_250 * 100}));
+  const eu = {within: DEC[EU].within, share: EXP[EU].share_250 * 100};
+  const W = 560, H = 330, L = 40, R = 16, T = 12, B = 30;
+  const xs = pts.map(p => p.within), ys = pts.map(p => p.share);
+  const x = scale(Math.floor(Math.min(...xs)) - 1, Math.ceil(Math.max(...xs)) + 1, L, W - R);
+  const y = scale(Math.floor(Math.min(...ys) / 5) * 5, Math.ceil(Math.max(...ys) / 5) * 5, H - B, T);
+  let svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Gap within sectors against share of employees in large enterprises">`;
+  for (let v = Math.floor(Math.min(...ys) / 5) * 5; v <= Math.ceil(Math.max(...ys) / 5) * 5; v += 10)
+    svg += `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" class="grid-line"/><text x="${L - 6}" y="${y(v) + 4}" text-anchor="end" class="axis">${v}%</text>`;
+  for (let v = 5; v <= Math.max(...xs) + 1; v += 5)
+    svg += `<text x="${x(v)}" y="${H - 10}" text-anchor="middle" class="axis">${v}%</text>`;
+  svg += `<line x1="${x(eu.within)}" x2="${x(eu.within)}" y1="${T}" y2="${H - B}" class="base-line"/>`;
+  svg += `<line x1="${L}" x2="${W - R}" y1="${y(eu.share)}" y2="${y(eu.share)}" class="base-line"/>`;
+  svg += `<text x="${x(eu.within) + 4}" y="${T + 10}" class="axis">EU-27</text>`;
+  const sorted = pts.slice().sort((a, b) => (a.geo === state.geo) - (b.geo === state.geo));
+  svg += sorted.map(p => {
+    const sel = p.geo === state.geo;
+    const t = `${NAME[p.geo]}\nGap within sectors: ${pct(p.within)}\nEmployees in 250+: ${p.share.toFixed(0)}%`;
+    return `<g data-tip="${esc(t)}" data-geo="${p.geo}" style="cursor:pointer">
+      <circle cx="${x(p.within)}" cy="${y(p.share)}" r="11" fill="transparent"/>
+      <circle cx="${x(p.within)}" cy="${y(p.share)}" r="${sel ? 6.5 : 4.5}" fill="${sel ? 'var(--s1)' : 'var(--context)'}" stroke="var(--surface)" stroke-width="2"/>
+      ${sel ? `<text x="${x(p.within) + 10}" y="${y(p.share) + 4}" class="lbl sel">${esc(NAME[p.geo])}</text>` : ''}</g>`;
+  }).join('');
+  svg += '</svg>';
+  const host = document.getElementById('scatter');
+  host.innerHTML = svg;
+  host.querySelectorAll('g[data-geo]').forEach(el => el.addEventListener('click', () => choose(el.dataset.geo)));
+}
+
+// ---- sectors --------------------------------------------------------------------------------
+function sectors() {
+  const g = state.geo;
+  document.getElementById('sectors-title').textContent = g === EU ? 'Inside a country: sectors' : `Inside ${NAME[g]}: sectors`;
+  const host = document.getElementById('sectors');
+  const rows = (SECTORS[g] || []).slice().sort((a, b) => b.within - a.within);
+  if (!rows.length) { host.innerHTML = '<p class="empty">Choose a country to see how each sector contributes to its gap.</p>'; return; }
+  const latest = Object.fromEntries((LATEST[g] || []).map(r => [r.nace, r.gap]));
+  const m = Math.max(1, ...rows.flatMap(r => [Math.abs(r.between), Math.abs(r.within)]));
+  const bar = (v, c) => {
+    const W = 120, H = 14, x = scale(-m, m, 0, W), a = Math.min(x(0), x(v)), w = Math.abs(x(v) - x(0));
+    return `<svg viewBox="0 0 ${W} ${H}" style="max-width:120px;display:inline-block;vertical-align:middle" aria-hidden="true">
+      <line x1="${x(0)}" x2="${x(0)}" y1="0" y2="${H}" class="base-line"/>
+      <rect x="${a}" y="2" width="${Math.max(w, .5)}" height="${H - 4}" rx="2" fill="${c}"/></svg>`;
+  };
+  host.innerHTML = `<table><thead><tr><th>Sector</th><th>Women employed here</th><th>Men employed here</th><th>Gap in the sector, 2022</th>
+    <th>Where they work</th><th></th><th>Within the sector</th><th></th><th>Published gap, ${D.meta.latest_year}</th></tr></thead><tbody>` +
+    rows.map(r => `<tr><td>${esc(SECTION[r.nace] || r.nace)}</td><td>${(r.share_F * 100).toFixed(1)}%</td><td>${(r.share_M * 100).toFixed(1)}%</td>
+      <td>${pct(r.gap)}</td><td>${pts(r.between)}</td><td class="contrib">${bar(r.between, 'var(--s2)')}</td>
+      <td>${pts(r.within)}</td><td class="contrib">${bar(r.within, 'var(--s1)')}</td><td>${pct(latest[r.nace])}</td></tr>`).join('') +
+    `</tbody></table>`;
+}
+
+// ---- size, control, age ---------------------------------------------------------------------
+function size() {
+  const g = state.geo, e = EXP[g], host = document.getElementById('size');
+  if (!e) { host.innerHTML = '<p class="empty">No data.</p>'; return; }
+  const parts = [['10–49', e.share_10_49, 'var(--o1)'], ['50–249', e.share_50_249, 'var(--o2)'], ['250 or more', e.share_250, 'var(--o3)']];
+  const W = 500, H = 34; let x0 = 0;
+  let svg = `<svg viewBox="0 0 ${W} ${H + 22}" role="img" aria-label="Employees by enterprise size">`;
+  parts.forEach(([l, v, c], i) => {
+    const w = v * W - (i < parts.length - 1 ? 2 : 0);
+    svg += `<rect x="${x0}" y="0" width="${w}" height="${H}" rx="3" fill="${c}" data-tip="${esc(`${l} employees: ${(v * 100).toFixed(1)}%`)}"/>`;
+    svg += `<text x="${x0 + (v * W) / 2}" y="${H + 16}" text-anchor="middle" class="val">${(v * 100).toFixed(0)}%</text>`;
+    x0 += v * W;
+  });
+  host.innerHTML = svg + '</svg>' + (() => {
+    const s = SIZE[g];
+    if (!s) return `<p class="hint" style="margin-top:.6rem">Eurostat does not publish complete earnings by enterprise size for ${esc(NAME[g])}.</p>`;
+    const get = b => (s.find(r => r.band === b) || {}).gap;
+    return `<p style="margin:.7rem 0 0;font-size:.9rem">Gap in enterprises of 250 or more: <strong>${pct(get('250 or more'))}</strong>; in enterprises of 10 to 249: <strong>${pct(get('10 to 249'))}</strong>.</p>`;
+  })();
+}
+
+function control() {
+  const g = state.geo, rows = CONTROL[g] || [], host = document.getElementById('control');
+  const pub = (rows.find(r => r.control === 'PUB') || {}).gap, prv = (rows.find(r => r.control === 'PRV') || {}).gap;
+  document.getElementById('control-hint').textContent = `Published gap, ${D.meta.latest_year}.`;
+  if (pub == null && prv == null) { host.innerHTML = `<p class="empty">${esc(NAME[g])} does not publish the gap by economic control.</p>`; }
+  else {
+    const vals = [['Public control', pub, 'var(--s2)'], ['Private control', prv, 'var(--s1)']].filter(v => v[1] != null);
+    const m = niceMax(Math.max(5, ...vals.map(v => Math.abs(v[1]))));
+    host.innerHTML = barRows(vals, -Math.min(0, ...vals.map(v => v[1])) > 0 ? -m : 0, m);
+  }
+  const a = AGE[g] || [], ah = document.getElementById('age');
+  if (!a.length) { ah.innerHTML = `<p class="empty">No breakdown by age for ${esc(NAME[g])}.</p>`; return; }
+  const vals = AGES.map(([k, l]) => [l, (a.find(r => r.age === k) || {}).gap, 'var(--s1)']).filter(v => v[1] != null);
+  const lo = Math.min(0, ...vals.map(v => v[1]));
+  ah.innerHTML = `<div class="legend" style="margin-top:.4rem"><span>By age group</span></div>` + barRows(vals, lo < 0 ? -niceMax(-lo) : 0, niceMax(Math.max(5, ...vals.map(v => v[1]))));
+}
+
+function barRows(vals, lo, hi) {
+  const W = 500, rowH = 24, L = 110, R = 50, x = scale(lo, hi, L, W - R);
+  let svg = `<svg viewBox="0 0 ${W} ${vals.length * rowH + 4}" role="img" aria-label="Gap by group">`;
+  svg += `<line x1="${x(0)}" x2="${x(0)}" y1="0" y2="${vals.length * rowH}" class="base-line"/>`;
+  vals.forEach(([l, v, c], i) => {
+    const yy = i * rowH + 4, a = Math.min(x(0), x(v)), w = Math.abs(x(v) - x(0));
+    svg += `<text x="${L - 8}" y="${yy + 12}" text-anchor="end" class="lbl">${esc(l)}</text>`;
+    svg += `<rect x="${a}" y="${yy + 2}" width="${Math.max(w, 1)}" height="${rowH - 10}" rx="3" fill="${c}" data-tip="${esc(`${l}: ${pct(v)}`)}"/>`;
+    svg += `<text x="${Math.max(x(0), x(v)) + 6}" y="${yy + 12}" class="val">${pct(v)}</text>`;
+  });
+  return svg + '</svg>';
+}
+
+function render() { tiles(); dumbbell(); trend(); scatter(); sectors(); size(); control(); }
+select.value = state.geo;
+render();
+</script>
+</body></html>
