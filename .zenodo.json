@@ -1,0 +1,16 @@
+{
+  "title": "Where pay transparency bites: sectoral composition, enterprise size and the EU gender pay gap before Directive (EU) 2023/970",
+  "upload_type": "publication",
+  "publication_type": "workingpaper",
+  "description": "<p>From June 2027, EU employers with 250 or more workers must report their gender pay gap every year and assess any gap of 5% or more between women and men doing work of equal value. Using Eurostat's Structure of Earnings Survey 2022, this working paper splits the published gap of each Member State into a part due to the sectors women and men work in and a part within sectors, reconciled with the published figures for all 27 countries. The within-sector gap exceeds the published one in most Member States, is largest where the headline is smallest, and is wider in the enterprises of 250 or more that report first. The record includes the paper, the article, the interactive dashboard, the data snapshots and the R code that rebuilds every figure.</p>",
+  "creators": [
+    {"name": "Perroni, Domenico", "orcid": "0009-0001-8806-5188", "affiliation": "Independent researcher"}
+  ],
+  "keywords": ["gender pay gap", "pay transparency", "Directive (EU) 2023/970", "decomposition", "Structure of Earnings Survey", "Eurostat"],
+  "license": "cc-by-4.0",
+  "language": "eng",
+  "related_identifiers": [
+    {"identifier": "https://d0m3n1c0x.github.io/where-pay-transparency-bites/", "relation": "isSupplementedBy", "resource_type": "other"},
+    {"identifier": "https://github.com/D0M3N1C0X/pay-transparency-readiness-kit", "relation": "references", "resource_type": "software"}
+  ]
+}

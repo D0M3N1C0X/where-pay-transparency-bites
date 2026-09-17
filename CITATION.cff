@@ -1,0 +1,28 @@
+cff-version: 1.2.0
+message: "If you use this work, please cite the working paper."
+title: "Where pay transparency bites"
+type: software
+authors:
+  - family-names: Perroni
+    given-names: Domenico
+    orcid: "https://orcid.org/0009-0001-8806-5188"
+repository-code: "https://github.com/D0M3N1C0X/where-pay-transparency-bites"
+url: "https://d0m3n1c0x.github.io/where-pay-transparency-bites/"
+license: MIT
+version: "1.0.0"
+date-released: "2026-09-17"
+keywords:
+  - gender pay gap
+  - pay transparency
+  - Directive (EU) 2023/970
+  - decomposition
+  - Structure of Earnings Survey
+preferred-citation:
+  type: report
+  title: "Where pay transparency bites: sectoral composition, enterprise size and the EU gender pay gap before Directive (EU) 2023/970"
+  authors:
+    - family-names: Perroni
+      given-names: Domenico
+      orcid: "https://orcid.org/0009-0001-8806-5188"
+  year: 2026
+  url: "https://d0m3n1c0x.github.io/where-pay-transparency-bites/paper.pdf"
