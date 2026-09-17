@@ -1,0 +1,13 @@
+.Rproj.user/
+.Rhistory
+.RData
+.DS_Store
+/_site/
+/.quarto/
+**/*.quarto_ipynb
+paper/paper.typ
+paper/paper_files/
+article/index_files/
+_environment.local
+
+/_*.local

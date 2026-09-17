@@ -1,0 +1,5 @@
+data/raw/*.json linguist-generated
+outputs/* linguist-generated
+dashboard/index.html linguist-generated
+figures/*.svg linguist-generated
+renv/activate.R linguist-vendored
