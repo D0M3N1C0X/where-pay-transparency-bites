@@ -1,0 +1,219 @@
+---
+title: "Where pay transparency bites"
+subtitle: "Europe's published gender pay gap understates what employers will find inside their own workforces"
+author: "Domenico Perroni"
+date: 2026-09-17
+date-format: "D MMMM YYYY"
+format:
+  html:
+    minimal: true
+    embed-resources: true
+    css: style.css
+    toc: false
+    lang: en
+    fig-width: 6.8
+    fig-height: 4.3
+bibliography: ../paper/references.bib
+link-citations: true
+---
+
+```{r setup}
+suppressPackageStartupMessages({library(dplyr); library(tidyr); library(ggplot2)})
+for (f in list.files("R", pattern = "[.]R$", full.names = TRUE)) source(f)
+a <- run_analysis()
+f <- facts(a)
+```
+
+::: {.lede}
+From June 2027, every employer in the EU with 250 or more workers has to publish its gender pay
+gap every year, and to justify, fix or jointly assess any gap of 5% or more between women and men
+doing work of equal value. The number most people will benchmark against is the national gap
+Eurostat publishes. **It is the wrong benchmark.** Inside the same sector, the gap is wider in
+`r f$within_above` of `r f$countries` Member States, and it is wider still in the large employers
+that report first.
+:::
+
+*Explore every country in the [interactive dashboard](dashboard/) · read the
+[working paper](paper.pdf) (PDF)*
+
+## The short version
+
+- **Half of the workforce is in the first wave.** `r f$eu_250` of employees in enterprises with
+  10 or more staff work for one with 250 or more, the size that reports every year from
+  7 June 2027. Another `r f$eu_50` work in enterprises of 50 to 249.
+- **The published EU gap was `r f$eu_2022` in 2022; inside the same sector it was
+  `r f$eu_within`.** Women are over-represented in sectors that pay above average, such as
+  education and health, and that flatters the national figure.
+- **The lowest headline gaps hide the most.** `r f$it$name`: `r f$it$gap` published,
+  `r f$it$within` within sectors. `r f$pl$name`: `r f$pl$gap` against `r f$pl$within`.
+  `r f$ro$name`: `r f$ro$gap` against `r f$ro$within`.
+- **The gap is wider where reporting is annual.** In all `r f$size_countries` countries where
+  Eurostat publishes earnings by enterprise size, the gap is larger in enterprises of 250 or more.
+  In Poland it is `r f$pl_large` against `r f$pl_small` in smaller ones.
+- **What employers will report looks like the inside view, not the headline.** The Directive
+  compares women and men in the same organisation and in the same category of workers. Expect
+  those numbers to surprise, most of all where the national gap looks small.
+
+## 1. A gap that has been closing
+
+```{r trend, fig.height = 3.6}
+fig_trend(a)
+```
+
+The unadjusted gap for the EU-27 fell from `r f$eu_2010` in 2010 to `r f$eu_latest` in
+`r f$year`. It narrowed in `r f$narrowed` of `r f$compared` countries and widened in
+`r f$widened`. In `r f$year` it ranged from `r f$lowest_gap` in `r f$lowest` to
+`r f$highest_gap` in `r f$highest`.
+
+That is the figure behind most headlines, and it is computed well: mean gross hourly earnings of
+men and women in enterprises with ten or more employees, across the whole economy except public
+administration and defence [@eurostat_gpg_meta]. What it cannot show is where the gap sits.
+
+## 2. The headline hides the gap inside sectors
+
+A national gap mixes two things: **where** women and men work, and **how** they are paid once
+they are there. Splitting the 2022 gap across the 17 economic sections of the Structure of
+Earnings Survey separates the two. The split is symmetric, so the two parts add up to the
+published gap exactly and do not depend on taking men's or women's pay as the yardstick.
+
+```{r hidden, fig.height = 6.4}
+fig_hidden(a)
+```
+
+In `r f$between_negative` countries the "where" part is negative: women are concentrated in
+sectors that pay more per hour than the average. In Italy, `r f$it_education` of women in the
+survey work in education against `r f$it_education_m` of men, and `r f$it_health` in health and
+social work against `r f$it_health_m`. That lowers the Italian headline by `r sub("-", "", f$it$between)`,
+and leaves a gap of `r f$it$within` between women and men working in the same sector.
+
+The countries where the headline hides the most are `r f$hidden_top`. Part of the explanation is
+well documented: where fewer women work, those who do are often the better paid, which keeps the
+average gap low [@olivetti2008]. For an employer, the reason matters less than the consequence.
+The Directive looks inside each employer and compares women and men doing the same work or work
+of equal value. That comparison is far closer to the within-sector view than to the national
+average, and there the gap is wider than the headline suggests.
+
+The result does not hinge on the method. Taking men's pay as the reference, the within-sector
+gap exceeds the published one in `r f$within_above_men` countries; taking women's, in
+`r f$within_above_women`.
+
+## 3. Finer cells: the gap persists
+
+Sectors are broad. Where Eurostat publishes complete figures by occupation
+(`r f$finer_occ` countries) or by sector and occupation together (`r f$finer_so` countries),
+the gap between women and men in the same cell stays between `r f$finer_min` and
+`r f$finer_max`:
+
+```{r finer}
+finer <- a$decomposition |>
+  filter(cells != "sector", usable, geo %in% EU27) |>
+  mutate(Country = unname(a$names[geo])) |>
+  select(Country, cells, official, within) |>
+  pivot_wider(names_from = cells, values_from = within) |>
+  arrange(Country)
+knitr::kable(
+  finer |> mutate(across(where(is.numeric), \(x) ifelse(is.na(x), "", fmt_pct(x)))),
+  col.names = c("Country", "Published gap", "Within occupation", "Within sector and occupation"),
+  align = "lrrr"
+)
+```
+
+Where the published gap is small, finer cells confirm a wide gap between women and men doing
+similar work. Where it is large, as in Austria and Germany, part of it reflects occupations, and
+the gap inside cells sits a few points below the headline without disappearing. Elsewhere the
+cells are suppressed for confidentiality, and the analysis does not guess.
+
+## 4. Half the workforce reports every year from 2027
+
+```{r size, fig.height = 3.2}
+fig_size(a)
+```
+
+Across the EU, `r f$eu_250` of employees in enterprises with ten or more staff work in one of
+250 or more, from `r f$min_250_share` in `r f$min_250` to `r f$max_250_share` in `r f$max_250`.
+Those employers report every year from June 2027. Employers of 150 to 249 report from 2027 every
+three years, and those of 100 to 149 from 2031; the survey groups all enterprises of 50 to 249
+together, so the share of workers they cover cannot be separated.
+
+The first wave is also where the gap is widest. In `r f$size_names`, the only countries with
+complete figures by size, the gap in enterprises of 250 or more is larger than in smaller ones:
+`r f$de_large` against `r f$de_small` in Germany, `r f$pl_large` against `r f$pl_small` in
+Poland.
+
+## 5. Where it bites
+
+```{r bites, fig.height = 5.1}
+fig_bites(a)
+```
+
+Put the two measures together. **`r f$quadrant`** combine a within-sector gap above the EU level
+with an above-average share of employees in annual reporters: the first reports will show wide
+gaps, and many of them. In `r f$high_within_small`, the gap inside sectors is also above the EU
+level, but more workers sit in mid-sized firms. There, the three-yearly reports of employers with
+150 to 249 workers, and the right of every worker to ask for pay information (Article 7), will
+carry more of the weight.
+
+## 6. Two things the headline does show
+
+```{r control, fig.height = 5.3}
+fig_control(a)
+```
+
+**The private sector carries the wider gap.** In `r f$public_lower` of the
+`r f$public_compared` countries that publish both, the gap is smaller in enterprises under
+public control; `r f$public_exception` is the exception. The Directive applies to public
+employers too, but the pressure will be greater in private ones.
+
+```{r age, fig.height = 3.6}
+fig_age(a)
+```
+
+**The gap opens with age.** In the median country it is `r f$age_young` for workers under 25
+and peaks at `r f$age_peak` at `r f$age_peak_group`. Gaps build through careers, not starting
+salaries, which is why the Directive's requirement to make pay progression criteria accessible
+(Article 6) matters as much as the reporting itself.
+
+## 7. What employers should do now
+
+1. **Stop benchmarking against the national gap.** It averages over where women and men work;
+   the Directive does not.
+2. **Measure inside your own categories of workers,** with a gender-neutral job evaluation, and
+   look at progression and at bonuses and allowances as well as base pay.
+3. **Run a dry run on 2026 payroll before June 2027.** A worked example of the whole exercise,
+   from the seven reporting items to the joint pay assessment screen, is in the
+   [Pay Transparency Readiness Kit](https://github.com/D0M3N1C0X/pay-transparency-readiness-kit)
+   [@perroni2026kit].
+4. **Be most careful where the headline looks reassuring.** `r f$low_but_hidden` publish gaps
+   below the EU level that widen by five points or more inside sectors.
+
+## Method in brief
+
+::: {.method}
+**Data.** Eurostat's unadjusted gender pay gap series (2010-`r f$year`) and the Structure of
+Earnings Survey 2022, downloaded on `r f$retrieved` through the Eurostat API and kept as
+snapshots in the repository. Scope as in the official gap: enterprises with ten or more
+employees, NACE sections B to S excluding O.
+
+**Decomposition.** For each country, the gap in mean hourly earnings is split into a between-cell
+and a within-cell part with symmetric weights [@oaxaca1973; @blinder1973; @reimers1983]:
+employment shares and wages of women and men are averaged, so the parts sum to the gap exactly.
+A country is used only if the cells cover at least 95% of each sex's employees and rebuild the
+published 2022 gap within 0.5 points. All `r f$countries` countries pass with sector cells (the
+largest difference is `r f$max_diff` points). The EU figure is the employee-weighted mean of the
+national ones, which is how Eurostat compiles it; pooling EU earnings instead would give
+`r f$pooled`.
+
+**Limits.** Cells are much coarser than an employer's categories of workers, so the within part
+is a guide to what employers will find, not an estimate of discrimination [@blau2017]. The 2022
+survey predates the Directive, excludes public administration and enterprises with fewer than
+ten employees, and measures enterprises, not legal employers.
+
+The full method, robustness checks and country tables are in the
+[working paper](paper.pdf). Data, code and an interactive dashboard:
+[github.com/D0M3N1C0X/where-pay-transparency-bites](https://github.com/D0M3N1C0X/where-pay-transparency-bites).
+:::
+
+## References
+
+::: {#refs}
+:::

@@ -1,0 +1,17 @@
+project:
+  type: default
+  execute-dir: project
+  output-dir: _site
+  render:
+    - article/index.qmd
+    - paper/paper.qmd
+
+execute:
+  echo: false
+  warning: false
+  message: false
+
+knitr:
+  opts_chunk:
+    dev: svglite
+    fig.align: center

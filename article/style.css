@@ -1,0 +1,57 @@
+/* The same house style as the reports in hr-people-analytics and pay-transparency-readiness-kit.
+   Light only: the charts are rendered on a light surface. */
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap");
+
+:root {
+  color-scheme: light;
+  --paper: #fbfcfd; --surface: #ffffff; --ink: #131a24; --ink-soft: #39434f; --muted: #5f6b7a;
+  --line: #e2e7ef; --line-strong: #c9d2df; --accent: #1d4ed8; --accent-wash: #eef3ff;
+  --plate: #fcfcfb; --plate-edge: #dde4ee;
+}
+
+* { box-sizing: border-box; }
+html { background: var(--paper); }
+body {
+  margin: 0 auto; max-width: 46rem; padding: clamp(1.25rem, 4vw, 3.5rem) clamp(1rem, 4vw, 2rem) 5rem;
+  background: var(--paper); color: var(--ink);
+  font-family: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 17px; line-height: 1.68; -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3 { font-family: "Source Serif 4", Georgia, "Times New Roman", serif; text-wrap: balance; }
+header#title-block-header { border-bottom: 2px solid var(--ink); padding-bottom: 1.5rem; margin-bottom: 2rem; }
+h1.title { font-size: clamp(2.2rem, 6vw, 3.3rem); font-weight: 600; letter-spacing: -0.015em; line-height: 1.1; margin: 0 0 0.6rem; }
+p.subtitle { font-family: "Source Serif 4", Georgia, serif; font-size: 1.3rem; color: var(--ink-soft); margin: 0 0 1rem; line-height: 1.35; }
+p.author, p.date {
+  font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 0.75rem; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--muted); margin: 0.2rem 0;
+}
+h2 { font-size: clamp(1.45rem, 3.4vw, 1.9rem); font-weight: 600; margin: 3rem 0 1rem; padding-top: 2rem; border-top: 1px solid var(--line); }
+p, li { color: var(--ink-soft); }
+strong { color: var(--ink); font-weight: 600; }
+a { color: var(--accent); text-underline-offset: 2px; text-decoration-thickness: 1px; }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+ul, ol { padding-left: 1.2rem; }
+li { margin: 0.45rem 0; }
+li::marker { color: var(--accent); }
+
+.lede p { font-size: 1.12rem; color: var(--ink); }
+.method { background: var(--accent-wash); border-left: 3px solid var(--accent); border-radius: 0 4px 4px 0; padding: 0.4rem 1.25rem; }
+.method p { font-size: 0.95rem; }
+
+div.cell-output-display, figure { margin: 1.5rem 0; }
+div.cell-output-display img, figure img {
+  display: block; width: 100%; height: auto; background: var(--plate);
+  border: 1px solid var(--plate-edge); border-radius: 6px; padding: 0.4rem;
+}
+
+table { width: 100%; border-collapse: collapse; font-size: 0.92rem; font-variant-numeric: tabular-nums; margin: 1rem 0; background: var(--surface); }
+th, td { padding: 0.55rem 0.8rem; border-bottom: 1px solid var(--line); }
+thead th {
+  font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 0.68rem; font-weight: 500; letter-spacing: 0.09em;
+  text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--line-strong); text-align: left;
+}
+
+#refs { font-size: 0.9rem; }
+#refs .csl-entry { margin: 0.5rem 0; padding-left: 1.5rem; text-indent: -1.5rem; color: var(--ink-soft); }
+
+@media (max-width: 640px) { body { font-size: 16px; } table { display: block; overflow-x: auto; } }
