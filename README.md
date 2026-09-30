@@ -20,7 +20,7 @@ it is wider still in the large employers that report first.
 
 | | |
 |---|---|
-| **The published EU gap was 12.2% in 2022; inside the same sector it was 14.6%.** Women are over-represented in sectors that pay above average, such as education and health, which lowers the national figure. | **The lowest headlines hide the most.** Italy publishes 3.8% and has 14.4% within sectors; Poland 7.9% against 14.5%; Romania 1.5% against 8.7%. |
+| **The published EU gap was 12.2% in 2022; inside the same sector it was 14.6%.** Women are over-represented in sectors that pay above average, such as education and health, which lowers the national figure. | **The lowest headlines hide the most.** Italy publishes 3.8% and has 14.4% within sectors; Poland 7.8% against 14.5%; Romania 1.5% against 8.7%. |
 | **Half of the workforce is in the first wave.** 51% of employees in enterprises with 10+ staff work for one with 250 or more, which report every year from 7 June 2027. | **The gap is wider where reporting is annual.** In all 6 countries with complete earnings by enterprise size, the gap is larger in enterprises of 250+: 14.0% against 0.8% in Poland. |
 
 ![The published gap understates the gap inside sectors](figures/01_hidden_gap.svg)

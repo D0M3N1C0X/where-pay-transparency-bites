@@ -39,7 +39,9 @@ facts <- function(a) {
   age <- a$age |> dplyr::filter(geo %in% EU27) |> dplyr::group_by(age) |> dplyr::summarise(m = stats::median(gap))
   country <- function(code) {
     r <- national |> dplyr::filter(geo == code)
-    list(name = nm(code), gap = fmt_pct(r$gap), within = fmt_pct(r$within), between = fmt_pp(r$between))
+    # `gap` is quoted as the published figure, so it is Eurostat's, not the rebuilt one (they differ by
+    # up to the reconciliation tolerance, e.g. Poland 7.8 published against 7.9 rebuilt).
+    list(name = nm(code), gap = fmt_pct(r$official), within = fmt_pct(r$within), between = fmt_pp(r$between))
   }
 
   list(
