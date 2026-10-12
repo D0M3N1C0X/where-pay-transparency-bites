@@ -110,7 +110,7 @@ On macOS 13, Quarto's bundled Sass compiler does not start; point `QUARTO_DART_S
 
 ## Cite
 
-See [`CITATION.cff`](CITATION.cff). A DOI is minted on Zenodo for each release.
+See [`CITATION.cff`](CITATION.cff). The repository is set up for Zenodo archiving ([`.zenodo.json`](.zenodo.json)); the DOI will be added here with the first archived release.
 
 ## About
 
