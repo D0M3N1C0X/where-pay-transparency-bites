@@ -25,12 +25,12 @@ f <- facts(a)
 ```
 
 ::: {.lede}
-From June 2027, every employer in the EU with 250 or more workers has to publish its gender pay
-gap every year, and to justify, fix or jointly assess any gap of 5% or more between women and men
+From June 2027, every employer in the EU with 250 or more workers has to report its gender pay
+gap every year (from 150 workers, every three years), and to justify, fix or jointly assess any gap of 5% or more between women and men
 doing work of equal value. The number most people will benchmark against is the national gap
 Eurostat publishes. **It is the wrong benchmark.** Inside the same sector, the gap is wider in
 `r f$within_above` of `r f$countries` Member States, and it is wider still in the large employers
-that report first.
+that report every year.
 :::
 
 *Explore every country in the [interactive dashboard](dashboard/) · read the

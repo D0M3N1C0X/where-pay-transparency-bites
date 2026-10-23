@@ -1,7 +1,7 @@
 # Where pay transparency bites
 
-From June 2027, every EU employer with 250 or more workers must publish its gender pay gap every
-year. The benchmark everyone reaches for is the national gap Eurostat publishes. **This project
+From June 2027, every EU employer with 250 or more workers must report its gender pay gap every
+year (employers with 150 to 249 every three years). The benchmark everyone reaches for is the national gap Eurostat publishes. **This project
 shows why that benchmark flatters**: split across sectors, the 2022 gap is wider inside sectors
 than in the headline in 22 of the 27 Member States, most of all where the headline is small, and
 it is wider still in the large employers that report first.
