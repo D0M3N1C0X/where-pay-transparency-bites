@@ -1,16 +1,16 @@
-# One look for every chart: the validated reference palette (slot 1 blue, slot 2 orange, a
-# neutral grey for everything that is not the point), hairline grid, system sans.
+# One look for every chart, the portfolio identity (brand/tokens.css in d0m3n1c0x.github.io): Apple blue and
+# orange, a neutral grey for everything that is not the point, hairline grid, system sans.
 
 PALETTE <- list(
-  within = "#2a78d6",     # slot 1: the gap inside sectors
-  between = "#eb6834",    # slot 2: where women and men work
-  highlight = "#2a78d6",
-  context = "#c3c2b7",
-  ink = "#0b0b0b",
-  ink2 = "#52514e",
-  muted = "#898781",
-  grid = "#e1e0d9",
-  surface = "#fcfcfb"
+  within = "#0071e3",     # slot 1: the gap inside sectors
+  between = "#ff9500",    # slot 2: where women and men work
+  highlight = "#0071e3",
+  context = "#d2d2d7",
+  ink = "#1d1d1f",
+  ink2 = "#424245",
+  muted = "#6e6e73",
+  grid = "#e8e8ed",
+  surface = "#ffffff"
 )
 
 theme_bites <- function(base_size = 11) {

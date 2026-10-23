@@ -1,20 +1,30 @@
-# Where pay transparency bites
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="site-assets/cover-dark.png">
+  <img alt="The published pay gap understates what employers will find: 14.6% inside the same sector against 12.2% published in the EU; Italy 3.8% published, 14.4% inside sectors; 22 of 27 Member States." src="site-assets/cover-light.png">
+</picture>
 
-From June 2027, every EU employer with 250 or more workers must report its gender pay gap every
-year (employers with 150 to 249 every three years). The benchmark everyone reaches for is the national gap Eurostat publishes. **This project
-shows why that benchmark flatters**: split across sectors, the 2022 gap is wider inside sectors
-than in the headline in 22 of the 27 Member States, most of all where the headline is small, and
-it is wider still in the large employers that report first.
+<p align="center">
+  <a href="https://d0m3n1c0x.github.io/where-pay-transparency-bites/"><b>Read the article</b></a> ·
+  <a href="https://d0m3n1c0x.github.io/where-pay-transparency-bites/dashboard/">Explore every country</a> ·
+  <a href="https://d0m3n1c0x.github.io/where-pay-transparency-bites/paper.pdf">Working paper (PDF)</a>
+</p>
 
-[![CI](https://github.com/D0M3N1C0X/where-pay-transparency-bites/actions/workflows/ci.yml/badge.svg)](https://github.com/D0M3N1C0X/where-pay-transparency-bites/actions/workflows/ci.yml)
-![R](https://img.shields.io/badge/R-4.6-276DC3)
-![Quarto](https://img.shields.io/badge/Quarto-1.10-4a90d9)
-![data](https://img.shields.io/badge/data-Eurostat-f2a900)
-![license](https://img.shields.io/badge/license-MIT%20%2F%20CC%20BY%204.0-lightgrey)
+<p align="center">
+  <a href="https://github.com/D0M3N1C0X/where-pay-transparency-bites/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/D0M3N1C0X/where-pay-transparency-bites/actions/workflows/ci.yml/badge.svg"></a>
+  <img alt="R 4.6" src="https://img.shields.io/badge/R-4.6-0071e3">
+  <img alt="Quarto 1.10" src="https://img.shields.io/badge/Quarto-1.10-5e5ce6">
+  <img alt="Data: Eurostat" src="https://img.shields.io/badge/data-Eurostat-6e6e73">
+  <img alt="Licence: MIT and CC BY 4.0" src="https://img.shields.io/badge/licence-MIT%20%2F%20CC%20BY%204.0-6e6e73">
+</p>
 
-### ▶ [Read the article](https://d0m3n1c0x.github.io/where-pay-transparency-bites/) · [Open the dashboard](https://d0m3n1c0x.github.io/where-pay-transparency-bites/dashboard/) · [Working paper (PDF)](https://d0m3n1c0x.github.io/where-pay-transparency-bites/paper.pdf)
+## Why this matters
 
----
+From June 2027, every EU employer with 250 or more workers must report its gender pay gap every year (employers with
+150 to 249 every three years), and any category of workers with a gap of 5% or more has to be justified or fixed. The
+benchmark everyone reaches for is the national gap Eurostat publishes. **This project shows why that benchmark
+flatters**: split across sectors, the 2022 gap is wider inside sectors than in the headline in 22 of the 27 Member
+States, most of all where the headline is small, and it is wider still in the large employers that report every year.
+For an HR or reward team, it means the first report will look worse than the national number suggests.
 
 ## What it finds
 
@@ -23,11 +33,16 @@ it is wider still in the large employers that report first.
 | **The published EU gap was 12.2% in 2022; inside the same sector it was 14.6%.** Women are over-represented in sectors that pay above average, such as education and health, which lowers the national figure. | **The lowest headlines hide the most.** Italy publishes 3.8% and has 14.4% within sectors; Poland 7.8% against 14.5%; Romania 1.5% against 8.7%. |
 | **Half of the workforce is in the first wave.** 51% of employees in enterprises with 10+ staff work for one with 250 or more, which report every year from 7 June 2027. | **The gap is wider where reporting is annual.** In all 6 countries with complete earnings by enterprise size, the gap is larger in enterprises of 250+: 14.0% against 0.8% in Poland. |
 
-![The published gap understates the gap inside sectors](figures/01_hidden_gap.svg)
+<img alt="The published gap understates the gap inside sectors" src="figures/01_hidden_gap.svg" width="100%">
 
-![Where pay transparency bites](figures/02_where_it_bites.svg)
+## Every country, one click away
 
----
+The explorer is one HTML file: pick a country and see its gap over time, its sector by sector decomposition, its
+exposure to annual reporting, and its public and private, and age, breakdowns.
+
+<p align="center"><a href="https://d0m3n1c0x.github.io/where-pay-transparency-bites/dashboard/"><img alt="The Eurostat explorer: the EU, then Italy and Poland, with the published gap against the gap inside sectors." src="site-assets/tool.webp" width="100%"></a></p>
+
+<img alt="Where pay transparency bites" src="figures/02_where_it_bites.svg" width="100%">
 
 ## What you get
 
@@ -39,19 +54,7 @@ it is wider still in the large employers that report first.
 | [`outputs/`](outputs/) | analysts | Every result as a tidy CSV. |
 | [`docs/sources.md`](docs/sources.md) | reviewers | The source and status of every statement that does not come from the code. |
 
-## How it works
-
-```mermaid
-flowchart LR
-    A[Eurostat API] -->|scripts/fetch.R| B[data/raw/*.json<br/>dated snapshots]
-    B --> C[R/prepare.R<br/>cells in the published scope]
-    C --> D[R/decompose.R<br/>symmetric two-fold split]
-    D --> E{reconciles with the<br/>published gap?}
-    E -->|27 of 27 countries| F[R/analysis.R]
-    F --> G[outputs/*.csv]
-    F --> H[figures + dashboard]
-    F --> I[article + paper<br/>Quarto]
-```
+## The judgement calls
 
 - **Scope as published.** Enterprises with 10+ employees, NACE sections B to S excluding O, mean
   gross hourly earnings: the definition behind Eurostat's gap.
@@ -68,7 +71,20 @@ flowchart LR
 - **No number typed by hand.** The article and the paper take every figure from the code; the test
   suite checks the paper's abstract and this README's headline claims against it.
 
-## Run it
+<details>
+<summary><b>For engineers: how it works, how to run it, what is inside</b></summary>
+
+```mermaid
+flowchart LR
+    A[Eurostat API] -->|scripts/fetch.R| B[data/raw/*.json<br/>dated snapshots]
+    B --> C[R/prepare.R<br/>cells in the published scope]
+    C --> D[R/decompose.R<br/>symmetric two-fold split]
+    D --> E{reconciles with the<br/>published gap?}
+    E -->|27 of 27 countries| F[R/analysis.R]
+    F --> G[outputs/*.csv]
+    F --> H[figures + dashboard]
+    F --> I[article + paper<br/>Quarto]
+```
 
 Requires R 4.6 and Quarto 1.10.
 
@@ -86,8 +102,6 @@ Rscript scripts/fetch.R         # optional: refresh the Eurostat snapshots
 On macOS 13, Quarto's bundled Sass compiler does not start; point `QUARTO_DART_SASS` at the npm
 `sass` package in a git-ignored `_environment.local`.
 
-## What's inside
-
 ```
 ├── data/raw/            Eurostat snapshots, with address and retrieval date
 ├── R/
@@ -97,7 +111,7 @@ On macOS 13, Quarto's bundled Sass compiler does not start; point `QUARTO_DART_S
 │   ├── analysis.R       run_analysis(): every result in one place
 │   ├── numbers.R        the figures quoted in the text
 │   ├── figures.R        every chart
-│   └── theme.R          validated palette and chart style
+│   └── theme.R          the portfolio's palette and chart style
 ├── scripts/             fetch.R, build.R
 ├── article/             the article (Quarto, HTML)
 ├── paper/               the working paper (Quarto, Typst PDF) and its bibliography
@@ -108,13 +122,15 @@ On macOS 13, Quarto's bundled Sass compiler does not start; point `QUARTO_DART_S
 └── tests/testthat/      unit, reconciliation and text tests
 ```
 
+</details>
+
 ## Cite
 
 See [`CITATION.cff`](CITATION.cff). The repository is set up for Zenodo archiving ([`.zenodo.json`](.zenodo.json)); the DOI will be added here with the first archived release.
 
 ## About
 
-Built by **Domenico Perroni** — HR advisory, people analytics and media education, based in Kraków.
+Built by **Domenico Perroni**: HR advisory for the Italian market, people analytics and reward, based in Kraków.
 [GitHub profile](https://github.com/D0M3N1C0X) · [LinkedIn](https://www.linkedin.com/in/domenico-perroni) · [ORCID](https://orcid.org/0009-0001-8806-5188)
 
 **More from the same portfolio**
