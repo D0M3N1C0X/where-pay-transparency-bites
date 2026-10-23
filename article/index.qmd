@@ -56,7 +56,7 @@ that report every year.
 
 ## 1. A gap that has been closing
 
-```{r trend, fig.height = 3.6}
+```{r trend, fig.height = 3.6, fig.alt = "Line chart of the EU-27 gender pay gap from 2010 to the latest year, with a shaded band for the middle half of the 27 countries: the gap falls slowly over the period."}
 fig_trend(a)
 ```
 
@@ -76,7 +76,7 @@ they are there. Splitting the 2022 gap across the 17 economic sections of the St
 Earnings Survey separates the two. The split is symmetric, so the two parts add up to the
 published gap exactly and do not depend on taking men's or women's pay as the yardstick.
 
-```{r hidden, fig.height = 6.4}
+```{r hidden, fig.height = 6.4, fig.alt = "Paired dot chart for each Member State: the published gender pay gap and the gap within the same sector, 2022. In most countries the within-sector dot sits to the right, a wider gap."}
 fig_hidden(a)
 ```
 
@@ -125,7 +125,7 @@ cells are suppressed for confidentiality, and the analysis does not guess.
 
 ## 4. Half the workforce reports every year from 2027
 
-```{r size, fig.height = 3.2}
+```{r size, fig.height = 3.2, fig.alt = "Dot chart by country: the gender pay gap by enterprise size, 2022. The gap is wider in enterprises of 250 or more employees, the ones that report every year."}
 fig_size(a)
 ```
 
@@ -142,7 +142,7 @@ Poland.
 
 ## 5. Where it bites
 
-```{r bites, fig.height = 5.1}
+```{r bites, fig.height = 5.1, fig.alt = "Scatter plot of the Member States: the within-sector gender pay gap against the share of employees in enterprises of 250 or more, 2022, with the EU-27 marked. Countries top right are where pay transparency bites hardest."}
 fig_bites(a)
 ```
 
@@ -155,7 +155,7 @@ carry more of the weight.
 
 ## 6. Two things the headline does show
 
-```{r control, fig.height = 5.3}
+```{r control, fig.height = 5.3, fig.alt = "Dot chart by country: the unadjusted gender pay gap in privately and publicly controlled enterprises. The private sector has the wider gap in most countries."}
 fig_control(a)
 ```
 
@@ -164,7 +164,7 @@ fig_control(a)
 public control; `r f$public_exception` is the exception. The Directive applies to public
 employers too, but the pressure will be greater in private ones.
 
-```{r age, fig.height = 3.6}
+```{r age, fig.height = 3.6, fig.alt = "Range chart by age group: the median country's gender pay gap and the middle half of countries. The gap is small for the youngest workers and widens with age."}
 fig_age(a)
 ```
 

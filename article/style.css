@@ -4,7 +4,7 @@
 :root {
   color-scheme: light;
   --paper: #ffffff; --surface: #ffffff; --ink: #1d1d1f; --ink-soft: #424245; --muted: #6e6e73;
-  --line: #e8e8ed; --line-strong: #d2d2d7; --accent: #0071e3; --accent-wash: #eef5fd;
+  --line: #e8e8ed; --line-strong: #d2d2d7; --accent: #0066cc; --accent-wash: #eef5fd;
   --plate: #ffffff; --plate-edge: #e8e8ed;
 }
 
